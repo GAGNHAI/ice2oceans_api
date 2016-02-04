@@ -1,0 +1,37 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<h2>{{ title }}.</h2>
+<h3>{{ message }}</h3>
+
+<address>
+    Microsoft Research <br />
+    Building 99 <br />
+    Redmond, WA 98052-6399<br />
+</address>
+
+<address>
+    <strong>University of Alaska Fairbanks:</strong>   <a href="mailto:aaarendt@alaska.edu">aaarendt@alaska.edu</a><br />
+    <strong>Microsoft Research:</strong> <a href="mailto:Rob.Fatland@microsoft.com">Rob.Fatland@microsoft.com</a>
+</address>
+
+<p><h3>Developers</h3>
+   
+<ul>
+    <li>Nels Oscar: PhD student, Oregon State University </li>
+    <li>Rob Fatland: Microsoft Research</li>
+    <li>Anthony Arendt: Research Professor, University of Alaska Fairbanks </li>
+    <li>Justin Rich: GIS Professional </li>
+    <li>Christian Kienholz: PhD student, University of Alaska Fairbanks</li>
+</ul>
+
+</p>
+
+<p> <h3> Funding: </h3>
+    <ul>    
+        <a href="http://research.microsoft.com/en-us/projects/azure/" target="_blank">
+        <img src="../../static/app/images/blob.bmp" alt="blob" width="70" height="66" /></a> Microsoft Azure for Research 
+    </ul>
+</p>
+{% endblock %}

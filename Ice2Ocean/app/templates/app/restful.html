@@ -1,0 +1,109 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<style>
+    table, th, td {
+    border: 1px solid black;
+     border-collapse: collapse;
+}
+th, td {
+    padding: 15px;
+}
+</style>
+
+<h2>Description of URI templates for the API</h2>
+
+<table class="sp-table" border="0">
+    <tbody>
+        <tr class="sp-table-header-row">
+            <td><strong>Template (start each template string with: http://ice2ocean-api.azurewebsites.net/api/) </strong></td>
+            <td><strong>Description</strong></td>
+            <td><strong>Format</strong></td>
+            <td><strong>Description</strong></td>
+        </tr>    
+        <tr></tr>
+        <tr>
+            <td colspan="4"><strong>RASTERS</strong></td>
+        </tr>   
+        <tr></tr>
+        <tr>
+            <td>get-raster?param={var1}&year={var2}&month={var3}&day={var4}<br/></></td>
+            <td><ul>
+					   <li>{var1} = 'prec' or 'roff'</li>
+					   <li>{var2} = 4 digit year </li> 
+					   <li>{var3} = month </li>
+					   <li>{var4} = day </li>
+				</ul>
+		    </td>
+            <td>png</td>
+            <td>Returns .png of requested SnowModel output</td>
+       </tr>
+
+        <tr></tr>
+        <tr>
+            <td colspan="4"><strong>VECTORS</strong></td>
+        </tr>   
+        <tr></tr>
+
+        <tr>
+            <td>get-vector?param={var1}&year={var2}&month={var3}&day={var4}<br/></></td>
+            <td><ul>
+					   <li>{var1} = 'prec' or 'roff'</li>
+					   <li>{var2} = 4 digit year </li> 
+					   <li>{var3} = month </li>
+					   <li>{var4} = day </li>
+				</ul>
+		    </td>
+            <td>png</td>
+            <td>Returns .png of requested SnowModel output</td>
+       </tr>
+
+        <tr></tr>
+        <tr>
+            <td colspan="4"><strong>TIMESERIES</strong></td>
+        </tr>
+        <tr>
+            <td>get-timeseries?table=GRACE&amp;region={var1}&version={var2}</td>
+            <td><ul>
+                <li>{var1} = GRACE region </li>
+                <li>{var2} = version number </li>
+                </ul>
+            </td>
+            <td> csv file</td>
+            <td> date, SUM(mass) (gigatons, summed over the region) </td>
+        </tr>   
+        <tr>
+            <td>get-timeseries?table=GRACE&mascon={var1}&version={var2}</td>
+            <td><ul>
+                <li>{var1} = mascon number </li>
+                <li>{var2} = version number </li>
+                </ul>
+            </td>
+            <td> csv file</td>
+            <td> date, mass (gigatons) </td>
+        </tr>
+        <tr>
+            <td>get-timeseries?table=streamgages&location={var1}</td>
+            <td><ul>
+                <li>{var1} = stream location </li>
+                </ul>
+            </td>
+            <td> csv file</td>
+            <td> date, gaugeid, discharge </td>
+        </tr>
+                <tr>
+            <td>get-timeseries?table=pointbalances&glacier={var1}</td>
+            <td><ul>
+                <li>{var1} = glacier name </li>
+                </ul>
+            </td>
+            <td> csv file</td>
+            <td> start date, end date, stake, elevation (m), balance (m water equivalent), lat/long (WKT format) </td>
+        </tr>
+</tbody>
+</table>
+    
+
+
+{% endblock %}
