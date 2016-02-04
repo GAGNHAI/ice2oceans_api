@@ -190,6 +190,7 @@ def gettimeseries(request):
         version = request.GET.get('version',None) 
         region = request.GET.get('region',None)
         glacier = request.GET.get('glacier',None)
+        collection = request.GET.get('collection',None)
         body = cache.blobstore.get_blob_to_bytes('ice2ocean',json_request)
         response = HttpResponse(body,'text/xml')
     except:
@@ -205,19 +206,21 @@ def gettimeseries(request):
                         (SELECT mascon, (area_km2 / 1e5) AS correction FROM mascon_fit WHERE region=%s) as cf LEFT JOIN
                         (SELECT mascon, date, values_filter1d from mascon_solution where version = %s) as main
                         ON cf.mascon = main.mascon GROUP BY date ORDER BY date;""" %(region,version)
-                ds = b.fetch_query(query)
-                response = HttpResponse(mimetype = 'text/csv')
-                writer = csv.writer(response)
-                for (d, m) in ds:
-                    writer.writerow([d.strftime("%m/%d/%Y"), m])
             elif 'streamgauges' in table:
-                query = """SELECT date, gaugeid, discharge FROM streamgauge_data WHERE gaugeid IN (SELECT gaugeid from streamgauges where name ~ '%s') ORDER BY date""" %(location)
+                query = """SELECT date, gaugeid, discharge FROM streamgauge_data WHERE gaugeid IN  
+                          (SELECT gaugeid from streamgauges where name ~ %s) ORDER BY date""" %(location)
             elif 'pointbalances' in table:
-                query = """SELECT start_date, end_date, stake, elevation, balance, ST_AsText(ST_Transform(geom,4246)) FROM point_balances WHERE name = %s ORDER BY start_date""" %(glacier)
-                ds = b.fetch_query(query)
-                response = HttpResponse(mimetype = 'text/csv')
-                ds.to_csv(response)
-            print 'past response'
+                query = """SELECT start_date, end_date, stake, elevation, balance, 
+                           ST_AsText(ST_Transform(geom,4246)) FROM point_balances 
+                           WHERE name = %s ORDER BY start_date""" %(glacier)
+            elif 'snowradar' in table:
+                query = """SELECT s.gid, s.elevation, s.geom, s.swe FROM snowradar AS s,
+                          snowradar_lines AS line WHERE line.collection = %s 
+                          AND ST_Intersects(line.geom, s.geom) ORDER BY s.elevation""" %(collection)
+            print(query)
+            ds = b.fetch_query(query)
+            response = HttpResponse(mimetype = 'text/csv')
+            ds.to_csv(response)
             return response
         except:
             print ""

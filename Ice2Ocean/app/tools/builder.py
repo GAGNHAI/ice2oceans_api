@@ -115,15 +115,9 @@ def fetch_query(query):
     print('in fetchquery')
     # Create database connection
     try:
-        engine = create_engine('postgresql://arendta:glA$iEr1@ice2o.csya4zsfb6y4.us-east-1.rds.amazonaws.com:5432/spatial_database')
-        #with SSHTunnelForwarder(("pscuw.cloudapp.net",22),
-        #ssh_username = "arendta",
-        #ssh_password = "Sa$2rUg^",
-        #remote_bind_address=("localhost",5432)) as server:
-        #   print server.local_bind_port
+        engine = create_engine('postgresql://' + user + ':' + word + '@' + host + ':5432/' + base)
         #   engine = create_engine('postgresql://arendta:glA$iEr1@localhost:'+ str(server.local_bind_port) + '/spatial_database')
         result =  pd.read_sql(query,engine)
-        #result = [data[i] for i in range(len(data))]
         return result
      
         #connection  = DBase.connect(" host='%s' dbname='%s' user='%s' password='%s'" %(host, base, user, word))
