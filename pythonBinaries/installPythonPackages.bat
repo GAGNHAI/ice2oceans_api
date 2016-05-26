@@ -1,0 +1,16 @@
+easy_install azure-0.11.1-py27-none-any.whl
+easy_install python-dateutil-2.2.win32-py2.7.exe
+easy_install six-1.8.0.win32-py2.7.exe
+easy_install tornado-4.0.2.win32-py2.7.exe
+easy_install numpy-MKL-1.8.2.win32-py2.7.exe
+easy_install pandas-0.14.1.win32-py2.7.exe
+easy_install scipy-0.14.0.win32-py2.7.exe
+easy_install netCDF4-1.1.1.win32-py2.7.exe
+easy_install matplotlib-1.4.0.win32-py2.7.exe
+easy_install pyproj-1.9.3.win32-py2.7.exe
+easy_install psycopg2-2.5.4.win32-py2.7.exe
+easy_install azure
+easy_install django==1.6.5
+easy_install django-filter
+easy_install docutils
+easy_install markdown

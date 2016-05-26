@@ -54,7 +54,7 @@ connection_properties = {
 
     
     # Database Connection String
-    'DATABASE_HOST' : 'pscuw.cloudapp.net',
+    'DATABASE_HOST' : 'ice2o.csya4zsfb6y4.us-east-1.rds.amazonaws.com',
     'DATABASE_NAME' : 'spatial_database',
     'DATABASE_USER' : 'arendta',
     'DATABASE_PASSWORD' : 'glA$iEr1',

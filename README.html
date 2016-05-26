@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Ice2Ocean Server setup and install readme</title>
+</head>
+<body>
+    <pre>
+    First things first, you must install the current python version:
+
+     -- Python 2.7.8 (default, Jun 30 2014, 16:03:49) [MSC v.1500 32 bit (Intel)] on win32
+     -- Plus some python modules but these will be installed in the "virtual environment" step below
+    
+    Second:
+
+      -- You will need a virtual environment.
+      -- You must construct your own as 'pre-built' is not an option at this juncture (9/2014).
+
+      To construct your own virtual environment:
+
+            Prereq: 
+                You will need this version of python (go to link and click install): https://www.python.org/ftp/python/2.7.8/python-2.7.8.msi.
+                This version of the cpython interpreter works reliably with Azure Websites as of (9/2014). 
+                  It also works reliably with cloud services and VM's. 
+                As you install: Be very "YES DO IT" in your approach but WARNING: the Customize Python 2.7.8 form on the wizard has a red X at the
+                  option to "Add python.exe to Path". Select the pull-down choice "will be installed on local hard drive". Proceed.  
+                You will need the latest version of Python Tools for Visual Studio. This installation guide assumes you can do that!
+
+            
+            A moment of explanation: As we add References to C# projects we add (similar idea) a python runtime environment to VS python Projects as needed.
+              In particular we have the LiveOceanServer Project (notice icon has "PY" in the box) and this will need a virtual environment inside of which
+              will exist the python runtime. So let's do that (an easy way of getting the python stuff running in Azure). 
+
+            In the VS python project 'LiveOceanServer' right click on the Python Environments section and select "Add Virtual Enviroment". 
+              Follow along with the wizard: env, python 2.7, box checked. This installs some 'easy to do' dependencies 
+            
+            Right click on the environment you have created "env (Python 2.7)". Select 'Open Command Prompt Here...'. 
+
+            At the prompt type:
+
+                > Scripts\activate
+
+            Another moment of explanation: Notice in your command console that the prompt now starts with (env) if you are in good shape. From now on 
+              when you install packages (python utilities / libraries like NumPy or SciPy) they will be installed within this virtual environment, NOT
+              in your global python environment. So this is very much a sandbox. 
+
+            Now fetch each binary installer individually from: http://www.lfd.uci.edu/~gohlke/pythonlibs/,
+              with the notable exception of pyproj. Here we have some specific instructions:
+                 - Cut and paste this URL into a browser: https://code.google.com/p/pyproj/downloads/detail?name=pyproj-1.9.3.win32-py2.7.exe&can=2&q=
+                 - Save the install file (do not run it) to a folder like Downloads
+                 - Go to that folder, right click on the install file: Properties
+                 - Click "Unblock" so it is greyed out, then Apply, Ok
+                 - Leave Windows Explorer, return to Visual Studio
+                 - Locate the LiveOceanServer Project (not the entire Solution) and open Python Environments; notice there is "env (Python 2.7)" here
+                 - Right click on "env (Python 2.7)" and select Open Command Prompt Here
+                 - In the Command Prompt window type in Scripts\activate.bat and return
+                 - Notice that the prompt returns starting with (env); this means that the virtual environment (env) has been activated
+                      - This means pip and easy_install will attempt to install things into the virtual python environment rather than the global python environment
+                 - Change directories in the Command Prompt window to where the python installer sits
+                 - easy_install pyproj-1.9.3-py2.7-win32.exe
+                 - If this finishes then it will appear in the listing for the environment in VS
+                 - If this does not work please see further documentation just below.
+
+            
+            Packages Required:
+                * python-dateutil          better datetime support than default
+                * six                      a dependency; not needed directly (gridded data)
+                * tornado                  a dependency; not needed directly (gridded data)
+                * pandas                   a dependency; not needed directly (gridded data)
+                * Numpy                    matrix operations against gridded data (and more)
+                * Scipy                    a dependency; not needed directly
+                * NetCDF4                  provides access to content of NetCDF files
+                * matplotlib               makes pngs from data (and many other things)
+                * pyproj                   bing maps projection
+
+            There will be options for several versions of python. Make sure you get the one specifically for python 2.7 and win32.
+              This is because we are using this on Azure in a machine that is 32bit. We could use a 64 bit machine in Azure; the important thing
+              is that the python version matches what-bits-we-use in Azure. 
+
+            Now move each of the binary (*.exe) files you've just grabbed into the virtual enviroment folder.
+
+            Back at the command prompt in you virtual enviroment (the one we set up at the start; if its been closed, repeat the bit about activating the virtual enviroment):
+            Anthony 20141008: or run the "installythonPackages.bat" file that has all of this in one place
+
+                (env) ... > easy_install python-dateutil-2.2.win32-py2.7.exe
+                (env) ... > easy_install six-1.7.3.win32-py2.7.exe
+                (env) ... > easy_install tornado-4.0.1.win32-py2.7.exe
+                (env) ... > easy_install numpy-MKL-1.8.2.win32-py2.7.exe
+                (env) ... > easy_install pandas-0.14.1.win32-py2.7.exe    
+                (env) ... > easy_install scipy-0.14.0.win32-py2.7.exe
+                (env) ... > easy_install netCDF4-1.1.1.win32-py2.7.exe
+                (env) ... > easy_install matplotlib-1.4.0.win32-py2.7.exe
+                (env) ... > easy_install pyproj-1.9.3.win32-py2.7.exe
+                (env) ... > easy_install psycopg2-2.5.4.win32-py2.7.exe
+
+                Anthony 20141008: I found these did not install as part of the "easy to do" dependancies described above. I included them in the batch file
+
+                (env) ... > easy_install azure
+                (env) ... > easy_install django==1.6.5
+                (env) ... > easy_install django-filter
+                (env) ... > easy_install docutils
+                (env) ... > easy_install markdown
+
+            And your virtual enviroment should now be set up for running LiveOceanServer. To check: in Visual Studio hit "Play" (green triangle where it says
+              Internet Explorer: It is going to use IE to show you the server on your localhost and a default Client so you can see what it is doing.)
+
+            Anecdotal: Rob on 9/5/2014 run-through had to install Scipy a second time; first time through the launch failed.
+
+            Pyproj installation "version 2" for when version 1 (above) does not work
+            Potential Pitfall: Pyproj has in various instances failed to properly install -- even with easy_install and an administrative console.
+              If this happens, don't yell at the heavens and take out your frustration on helpless inanimate objects. 
+              
+              One tack that seems to work reliably is to install it in the global site packages folder.
+
+              Do not invoke Scripts\activate in the console, 
+              Navigate to the location of the pyproj-1.9.3.win32-py2.7.exe executable
+              
+              ... > easy_install pyproj-1.9.3.win32-py2.7.exe
+
+              Now, in your python 2.7 installation directory locate the folder: Libs\site-packages\pyproj-1.9.3-py2.7-win32.egg
+              Copy the entire directory.
+              In VS right click the virtual environment you intend to use (env) and select Open Folder in File Explorer.
+              Navigate to from the root directory of the virtual enviroment to Lib\site-packages and paste the copied directory.
+              Finally, in the same directory locate a file called easy_install.pth
+              Open this file in the text editor of your choice.
+              
+              You will see something like this:
+
+                    import sys; sys.__plen = len(sys.path)
+                    ./numpy-1.8.2-py2.7-win32.egg
+                    ./netcdf4-1.1.0-py2.7-win32.egg
+                    ./pandas-0.14.1-py2.7-win32.egg
+                    ./scipy-0.14.0-py2.7-win32.egg
+                    ./matplotlib-1.3.1-py2.7-win32.egg
+                    ./pyparsing-2.0.2-py2.7-win32.egg
+                    ./tornado-4.0.1-py2.7-win32.egg
+                    ./backports.ssl_match_hostname-3.4.0.2-py2.7.egg
+                    ./certifi-14.05.14-py2.7.egg
+                    import sys; new=sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p=getattr(sys,'__egginsert',0); sys.path[p:p]=new; sys.__egginsert = p+len(new)
+
+              Add './pyproj-1.9.3-py2.7-win32.egg' on a new line before the final 'import ...'
+              Save this file and restart VS.
+              
+              Pyproj should now appear in the list of installed packages in the virtual enviroment.
+
+          Step 3: See if it works
+            In VS set LiveOceanServer as the default project
+            The >Start button now reads >Internet Explorer. Click this.
+            IE should start with http://localhost:XXXXX (changes each time you run)
+            You should see the LiveOcean splash screen
+            Add /admin to the URL and log in to Django administration using admin and the password, whatever that is 
+
+         Step 4: Creating a new LiveOceanServer super user
+            In VS look at the LiveOceanServer Solution: Here you will find the LiveOceanServer Project.
+            Within this Project is (unless you are starting fresh) a file called db.sqlite3. 
+            This file contains super user information and other Django configuration info
+            You can delete it and regenerate it as needed; but you do need it to exist to do Django administration.
+            Stop the instance running. 
+            Open the LiveOceanServer Project folder in Windows Explorer and BE SURE THAT THE FILE IS GONE.
+            In VS: Right click on LiveOceanServer (Project), select Python, select Django Synch DB
+            In the Django Management Console that appears you reply Yes to the prompt to create a new super user.
+            Create the super user noting the name and password.
+            This db.sqlite3 file is specific to your local copy of LiveOceanServer; it is not checked in.
+            If you check it in you clobber the previous version; so don't do that. This deservers a sub-comment on how repositories work.
+
+            Repository note; a point of potential confusion
+              The repository had a copy of db.sqlite3; so that is established as part of the Solution.
+              I got a local copy that I see in VS. 
+              I deleted my local copy of db.sqlite3. This made no change to the repository.
+              I created a new db.sqlite3. This has not yet been added to the Solution. It is a file without portfolio.
+              I may publish my solution to Azure; in which case the db.sqlite3 file goes along and will behave properly: The new super user is present.
+                This implies that when you click Publish it is the folder contents that are copied to Azure; not moderated by what is in the VS Project.
+              I may Check In my code to the repository. This will blow away the Repository copy of db.sqlite3 (because I blew it away locally)...
+              ...however! And this is the sinister part: Because I did not add db.sqlite3 to the Solution (the Project) it will not be in the Repository.
+              (Notice that after it was created it shows up in the LiveOceanServer Project folder but not in VS Solution Explorer.)
+              If I first right-click LiveOceanServer and Add... new file = db.sqlite3: Now there is a new file that is part of the solution; so a Check In
+                will copy that into the Repository.
+              Note: python tools for visual studio is still under active development; so the behavior of Django components may change w/r/t version control
+                over time. Shifting sands.
+            
+            Publishing note: File path length error.
+              This problem is a Windows API limit issue: http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx#maxpath
+              If Publish fails because of a "file length too long" error you may relocate your source tree to a shorter full path.
+              We created C:\\Src and put everything there using the Workspaces... control in Visual Studio Source Control Explorer.
+              Note that if you do this there is some "copy rigamarole" necessary to transplant the Python Virtual Environment and 
+              the db.sqlite3 admin file discussed above over to the new location. As follows: 
+                1. DO NOT BLOW AWAY YOUR ORIGINAL COPY OF LIVEOCEANECOSYSTEM; otherwise you've lost your virtual environment.
+                2. Use Windows File Explorer to locate your original LiveOceanServer project folder and Copy the env sub-folder.
+                3. Navigate to your new instance of LiveOceanServer and paste the env folder there.
+                4. Do likewise with db.sqlite3
+                
+        Step 5. Publish
+            In VS right click on the LiveOceanServer Project and select Publish. 
+            Here you follow the Wizard; and the key step is Preview. This is the set of litmus tests for whether 
+            the publication will work. The dry run happens on your machine; and if successful it will list all the 
+            files that will be sent to Azure. You then click "Publish".
+
+            One possible problem in publishing to Azure is trying to publish without a password. I didn't save the 
+            authentication profile; so one must back up in the Publish wizard to that step, doing it again, and again
+            checking that the authentication works. Then return to the Publish page of the wizard and proceed. 
+
+            If the admin pages do not appear to be working... (Kilroy)
+            
+
+
+Anthony's Added API calls:
+
+api/get-polygon?table=modern&name=Valdez
+ 
+    </pre>
+</body>
+</html>

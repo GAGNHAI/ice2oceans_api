@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Ice2Ocean Development Notes</title>
+</head>
+<body>
+    <pre>
+AAA 20141009 working to redirect requests for images from LiveOcean blob storage to Ice2Ocean blob storage: 
+    -created ice2ocean blob name/container and replicated the L.O. field table in ice2oceanfields
+    -changed names accordingly in 'settings.py'
+    -put a few sample pngs in ice2ocean (still using L.O. images)
+    -tested and API returns those images correctly
+
+    -CONFUSION: "STORAGE_ACCOUNT_NAME" AND "STORAGE_ACCOUNT_KEY" not accessed in current L.O. version.
+     Instead L.O. storage location is set to laplace/mapping in Ln16 of 'builder.py' in a line labeled 'Depreciated'. But when 
+     you run the api the pngs get sent to lafayette/liveocean. I can't trace that yet in the code.
+ 
+    -SOLVED: Nels says there are still some inconsistencies in naming that are being worked out.
+
+    Working on api/getoverlay: the call to blob storage for the png is:
+        body = cache.blobstore.get_blob_to_bytes('liveocean',json_request)
+    -better instead to do: ?
+        body = cache.blobstore.get_blob_to_bytes(connection_properties["STORAGE_CONTAINER"],json_request)
+      for now I have:  body = cache.blobstore.get_blob_to_bytes('ice2ocean',json_request) which works fine
+
+    -CONFUSION: images are currently being sent to the storage blob as JSON objects? If I manually try to download one image 
+    using Azure Storage Explorer it doesn't produce a physical file. Unclear on whether the JSON object is the metadata/label pointing
+    to a png? Probably will revert to parsing the JSON string from the http request and using that to select/name blob files for now.
+
+    -SOLVED: Nels points out the Azure Storage Explorer has some bugs. Better to view in VS. Note the files do not have an extension.
+
+    -there appear to be several formats currently accepted to make a request to the API. There is the JSON string as I've been testing so
+    far, which appears in the example on the splash page, and the (newer?) method Nels outlined in his last email:
+            http://lo-api-test.azurewebsites.net/api/get-overlay?year=2014&hour=6359&param=NO3&depthMeters=-20.0&cmap=jet
+    which presumably gives more control over plotting/colormaps and is a better method for indicating time? Each of these different
+    request methods are encapsulated in several try/except combinations in api/getoverlay
+
+    Working to modify api/extract_time to handle year,month,day timestamping (keep hourly in there for other potential cryo models)
+
+    Changing the blob storage locations: snowmodel/snowmodel will be the location of the raw GRADS output. But, keeping the variable
+    names the same for now (i.e. OCEAN_HIS) Kilroy says we should make these names more universal later.
+
+AAA 20141023
+
+Suggested changes:
+
+builder.py, line 96: remove 'naming' function? Doesn't appear to be used?
+
+AAA 20150216
+
+ice2ocean stripped of most of the LiveOcen modules including: instance.py; makeitso.py; test_sect.py; zfun.py
+
+Changed names of storage container variables to be more generic, in settings.py.
+Creating new blob storage table for metadata reporting.
+New restful.html documentation page on django with table explaining URI calls.
+
+
+
+
+</pre>
+</body>
+</html>
